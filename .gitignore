@@ -1,0 +1,44 @@
+# Google Drive 系統檔
+desktop.ini
+*.tmp
+~$*
+.tmp.drivedownload/
+
+# 敏感資料（絕對不能 commit）
+.env
+.env.*
+*.key
+credentials.*
+*.pem
+service-account*.json
+
+# OpenAI / API keys
+.openai.env
+
+# Claude Code 本地設定（含 permissions、可能記錄 token，絕不上雲）
+.claude/
+
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Firebase 本機快取（不影響部署）
+.firebase/
+firebase-debug.log
+firestore-debug.log
