@@ -12,8 +12,10 @@ credentials.*
 *.pem
 service-account*.json
 
-# OpenAI / API keys
+# OpenAI / Gemini / API keys
 .openai.env
+.gemini.env
+.firebase-token
 
 # Claude Code 本地設定（含 permissions、可能記錄 token，絕不上雲）
 .claude/
