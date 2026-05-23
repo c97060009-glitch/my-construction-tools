@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Firestore 寫入測試</title>
+  <style>
+    body { font-family: -apple-system, "Microsoft JhengHei", sans-serif; max-width: 720px; margin: 2em auto; padding: 0 1em; }
+    button { padding: 0.6em 1.2em; font-size: 1em; cursor: pointer; }
+    pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow: auto; max-height: 400px; }
+    .ok { color: green; } .err { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Firestore 寫入測試</h1>
+  <p>按下按鈕會寫一筆測試資料進 <code>site_attendance</code> collection，並列出目前所有資料。</p>
+
+  <button id="writeBtn">寫一筆測試資料</button>
+  <button id="readBtn">只讀現有資料</button>
+
+  <h2>結果</h2>
+  <pre id="output">（等待操作）</pre>
+
+  <script type="module">
+    import { db } from "./firebase-config.js";
+    import {
+      collection, addDoc, getDocs, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    const out = document.getElementById("output");
+    const log = (msg, cls = "") => {
+      out.textContent += (out.textContent === "（等待操作）" ? "" : "\n") + msg;
+      if (cls) out.className = cls;
+    };
+    const reset = () => { out.textContent = ""; out.className = ""; };
+
+    async function listAll() {
+      const snap = await getDocs(collection(db, "site_attendance"));
+      log(`目前 site_attendance 共 ${snap.size} 筆：`);
+      snap.forEach(d => log(` - ${d.id}: ${JSON.stringify(d.data())}`));
+    }
+
+    document.getElementById("writeBtn").addEventListener("click", async () => {
+      reset();
+      try {
+        const docRef = await addDoc(collection(db, "site_attendance"), {
+          worker_name: "瀏覽器測試",
+          site_name: "和平案",
+          check_in_at: serverTimestamp(),
+          note: "CDN + Hosting 測試寫入",
+          source: navigator.userAgent.includes("Mobile") ? "mobile" : "desktop",
+        });
+        log(`寫入成功，doc id: ${docRef.id}`, "ok");
+        await listAll();
+      } catch (e) {
+        log(`寫入失敗：${e.message}`, "err");
+      }
+    });
+
+    document.getElementById("readBtn").addEventListener("click", async () => {
+      reset();
+      try { await listAll(); } catch (e) { log(`讀取失敗：${e.message}`, "err"); }
+    });
+  </script>
+</body>
+</html>
